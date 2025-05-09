@@ -5,41 +5,91 @@ body {
 }
 
 header {
-  background-color: #f4f4f4;
-  padding: 10px;
+  background: #333;
+  color: white;
+  padding: 1rem;
   text-align: center;
 }
 
 nav a {
-  margin: 0 15px;
+  color: white;
+  margin: 0 10px;
   text-decoration: none;
-  color: #333;
 }
 
 main {
   padding: 20px;
 }
 
-form label {
-  display: block;
-  margin-top: 10px;
-}
-
-form input, form textarea {
+table {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 
-form button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+  vertical-align: middle;
+}
+
+input[type="text"], input[type="email"] {
+  width: 90%;
+  padding: 6px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.input-list {
   border: none;
+}
+
+/* Estilo para inputs quando em modo de edição na tabela */
+.edit-mode {
+  width: 90%;
+  padding: 6px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 6px 12px;
+  margin-right: 4px;
   cursor: pointer;
 }
 
-form button:hover {
-  background-color: #218838;
+button.danger {
+  background-color: #c0392b;
+  color: white;
+  border: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.form-usuario {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.form-usuario .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-usuario label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-usuario input {
+  padding: 8px;
+  font-size: 1rem;
 }

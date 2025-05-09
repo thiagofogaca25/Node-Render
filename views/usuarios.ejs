@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Usuários</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .hidden { display: none; }
+    table td { vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2>Lista de Usuários</h2>
+    <table>
+      <thead>
+        <tr><th>Nome</th><th>Email</th><th>Número</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        <% usuarios.forEach(user => { %>
+          <tr data-id="<%= user.id %>">
+            <form action="/usuarios/editar/<%= user.id %>" method="POST">
+              <td>
+                <span class="view-mode"><%= user.nome %></span>
+                <input class="edit-mode hidden" type="text" name="nome" value="<%= user.nome %>">
+              </td>
+              <td>
+                <span class="view-mode"><%= user.email %></span>
+                <input class="edit-mode hidden" type="email" name="email" value="<%= user.email %>">
+              </td>
+              <td>
+                <span class="view-mode"><%= user.numero %></span>
+                <input class="edit-mode hidden" type="text" name="numero" value="<%= user.numero %>">
+              </td>
+              <td>
+                <button type="button" class="edit-btn">Editar</button>
+                <button type="submit" class="save-btn hidden">Salvar</button>
+                <button type="button" class="cancel-btn hidden">Cancelar</button>
+            </form>
+            <form action="/usuarios/excluir/<%= user.id %>" method="POST" style="display:inline;">
+              <button type="submit" class="danger">Excluir</button>
+            </form>
+              </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    document.querySelectorAll('.edit-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const row = button.closest('tr');
+        row.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
+        row.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
+
+        row.querySelector('.edit-btn').classList.add('hidden');
+        row.querySelector('.save-btn').classList.remove('hidden');
+        row.querySelector('.cancel-btn').classList.remove('hidden');
+      });
+    });
+
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const row = button.closest('tr');
+        row.querySelectorAll('.view-mode').forEach(el => el.classList.remove('hidden'));
+        row.querySelectorAll('.edit-mode').forEach(input => {
+          input.classList.add('hidden');
+          input.value = input.defaultValue; // Reseta o valor
+        });
+
+        row.querySelector('.edit-btn').classList.remove('hidden');
+        row.querySelector('.save-btn').classList.add('hidden');
+        row.querySelector('.cancel-btn').classList.add('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

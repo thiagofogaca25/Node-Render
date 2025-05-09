@@ -5,66 +5,61 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuração do EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Servir arquivos estáticos (CSS)
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Usar body-parser para processar os dados do formulário
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Configuração do banco de dados SQLite
+// Banco de dados
 const db = new sqlite3.Database('./db/database.sqlite', (err) => {
-  if (err) {
-    console.error('Erro ao conectar ao banco de dados:', err.message);
-  } else {
-    console.log('Banco de dados SQLite conectado!');
-  }
+  if (err) console.error('Erro ao conectar ao banco:', err.message);
 });
 
-// Criar a tabela de contatos, se não existir
-db.run(`CREATE TABLE IF NOT EXISTS contatos (
+// Criação da tabela
+db.run(`CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome TEXT,
-  email TEXT,
-  mensagem TEXT
+  nome TEXT NOT NULL,
+  email TEXT NOT NULL,
+  numero TEXT NOT NULL
 )`);
 
-// Rota para a página inicial
-app.get('/', (req, res) => {
-  res.render('index', { title: 'Página Inicial' });
-});
+// Rotas
+app.get('/', (req, res) => res.redirect('/usuarios'));
 
-// Rota para a página de contato
-app.get('/contato', (req, res) => {
-  // Listar contatos do banco de dados
-  db.all('SELECT * FROM contatos', (err, rows) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Erro ao carregar contatos');
-    } else {
-      res.render('contato', { title: 'Página de Contato', contatos: rows });
-    }
+app.get('/usuarios', (req, res) => {
+  db.all('SELECT * FROM usuarios', (err, rows) => {
+    if (err) return res.status(500).send('Erro ao listar usuários');
+    res.render('usuarios', { usuarios: rows });
   });
 });
 
-// Rota para salvar um contato no banco de dados
-app.post('/contato', (req, res) => {
-  const { nome, email, mensagem } = req.body;
-  const sql = `INSERT INTO contatos (nome, email, mensagem) VALUES (?, ?, ?)`;
-  db.run(sql, [nome, email, mensagem], (err) => {
-    if (err) {
-      console.error('Erro ao salvar contato:', err.message);
-      res.status(500).send('Erro ao salvar contato');
-    } else {
-      res.redirect('/contato');
-    }
+app.get('/usuarios/novo', (req, res) => {
+  res.render('novo');
+});
+
+app.post('/usuarios', (req, res) => {
+  const { nome, email, numero } = req.body;
+  db.run('INSERT INTO usuarios (nome, email, numero) VALUES (?, ?, ?)', [nome, email, numero], (err) => {
+    if (err) return res.status(500).send('Erro ao adicionar usuário');
+    res.redirect('/usuarios');
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+app.post('/usuarios/editar/:id', (req, res) => {
+  const { id } = req.params;
+  const { nome, email, numero } = req.body;
+  db.run('UPDATE usuarios SET nome = ?, email = ?, numero = ? WHERE id = ?', [nome, email, numero, id], (err) => {
+    if (err) return res.status(500).send('Erro ao editar usuário');
+    res.redirect('/usuarios');
+  });
 });
+
+app.post('/usuarios/excluir/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM usuarios WHERE id = ?', [id], (err) => {
+    if (err) return res.status(500).send('Erro ao excluir usuário');
+    res.redirect('/usuarios');
+  });
+});
+
+app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
