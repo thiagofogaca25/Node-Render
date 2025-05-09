@@ -16,7 +16,7 @@
   </header>
   <main>
     <p>Entre em contato conosco através do formulário abaixo:</p>
-    <form>
+    <form action="/contato" method="POST">
       <label for="nome">Nome:</label>
       <input type="text" id="nome" name="nome" required>
 
@@ -28,6 +28,13 @@
 
       <button type="submit">Enviar</button>
     </form>
+
+    <h2>Contatos Enviados:</h2>
+    <ul>
+      <% contatos.forEach((contato) => { %>
+        <li><strong><%= contato.nome %></strong> (<%= contato.email %>) - <%= contato.mensagem %></li>
+      <% }) %>
+    </ul>
   </main>
 </body>
 </html>
